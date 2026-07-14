@@ -1,41 +1,37 @@
-name: Run Blogger XML Generator
+name: Deploy Products Directly to Blogger API
 
-# تحديد متى يشتغل السكربت (عند رفع كود جديد، أو بشكل يدوي، أو بجدولة زمنية)
 on:
   push:
     branches:
       - main
-  workflow_dispatch: # يتيح لك تشغيل السكربت يدوياً بضغطة زر من الموقع
+  workflow_dispatch: # يتيح لك التشغيل اليدوي بضغطة زر
 
 jobs:
-  run-python:
+  publish-products:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. جلب الملفات من المستودع إلى السيرفر الافتراضي
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # 2. تثبيت لغة بايثون على السيرفر
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
 
-    # 3. تثبيت المكتبات البرمجية المطلوبة
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pandas openpyxl requests beautifulsoup4
+        pip install pandas openpyxl requests
 
-    # 4. تشغيل السكربت لتوليد الملف
-    - name: Run Script
-      run: python generate_blogger_xml.py
-
-    # 5. حفظ الملف الناتج (XML) وإعادة رفعه إلى مستودعك تلقائياً
-    - name: Commit and Push changes
+    # تشغيل السكربت الجديد وتمرير الـ API Key و الـ Blog ID بأمان
+    - name: Run API Publisher Tool
+      env:
+        API_KEY: ${{ secrets.BLOGGER_API_KEY }}
+        BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
       run: |
-        git config --global user.name "GitHub Action"
-        git config --global user.email "action@github.com"
-        git add blogger_import_lap_products.xml
-        git diff --quiet && git diff --staged --quiet || (git commit -m "تحديث تلقائي لملف المنتجات" && git push)
+        python -c "
+        import os
+        from publish_to_blogger import publish_to_blogger_api
+        publish_to_blogger_api('lap_omega_all_colors.xlsx', os.environ['API_KEY'], os.environ['BLOG_ID'])
+        "
