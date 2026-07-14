@@ -1,19 +1,13 @@
-name: Deploy Products Directly to Blogger API
+name: Blogger API Diagnostics Tool
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch: # تشغيل يدوي
 
 jobs:
-  publish-products:
+  diagnose:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
@@ -22,9 +16,9 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pandas openpyxl requests google-auth google-auth-oauthlib
+        pip install requests google-auth google-auth-oauthlib
 
-    - name: Run API Publisher Tool
+    - name: Run Diagnostics
       env:
         TOKEN_JSON: ${{ secrets.BLOGGER_TOKEN_JSON }}
         BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
@@ -32,96 +26,80 @@ jobs:
         python -c "
         import os
         import json
-        import pandas as pd
         import requests
-        import html
-        import time
         from google.oauth2.credentials import Credentials
         from google.auth.transport.requests import Request
 
-        def publish():
-            excel_file = 'lap_omega_all_colors.xlsx'
-            blog_id = os.environ['BLOG_ID']
+        def run_tests():
+            blog_id = os.environ.get('BLOG_ID', '').strip()
+            token_env = os.environ.get('TOKEN_JSON', '').strip()
             
-            # قراءة بيانات الـ Token بالكامل
-            token_info = json.loads(os.environ['TOKEN_JSON'])
+            print('=== 🧪 1. فحص المتغيرات الأساسية ===')
+            print('رقم المدونة المستهدف (BLOG_ID): ' + str(blog_id))
+            if not blog_id:
+                print('❌ خطأ: رقم المدونة فارغ في الـ Secrets!')
+                return
             
-            # بناء كائن الـ Credentials المعتمد من جوجل لتلقي التجديد التلقائي
-            creds = Credentials(
-                token=token_info.get('token'),
-                refresh_token=token_info.get('refresh_token'),
-                token_uri=token_info.get('token_uri'),
-                client_id=token_info.get('client_id'),
-                client_secret=token_info.get('client_secret'),
-                scopes=['https://www.googleapis.com/auth/blogger']
-            )
-            
-            # إجبار التجديد دائماً لتفادي انتهاء صلاحية الـ Access Token المؤقت
-            print('جاري تجديد صلاحية الـ Token بشكل إجباري لتفادي الحظر...')
             try:
+                token_info = json.loads(token_env)
+                print('✅ تم تحميل الـ Token JSON بنجاح من الـ Secrets.')
+            except Exception as e:
+                print('❌ خطأ: فشل قراءة الـ Token JSON! تأكد من نسخ النص بالكامل: ' + str(e))
+                return
+
+            print('\n=== 🧪 2. تجديد الـ Token ===')
+            try:
+                creds = Credentials(
+                    token=token_info.get('token'),
+                    refresh_token=token_info.get('refresh_token'),
+                    token_uri=token_info.get('token_uri'),
+                    client_id=token_info.get('client_id'),
+                    client_secret=token_info.get('client_secret'),
+                    scopes=['https://www.googleapis.com/auth/blogger']
+                )
                 creds.refresh(Request())
-                print('🔄 تم تجديد صلاحية الدخول بنجاح وصناعة مفتاح جديد!')
-            except Exception as refresh_err:
-                print('❌ فشل تجديد الصلاحية تلقائياً: ' + str(refresh_err))
-                print('تنبيه: تأكد من أن الـ token.json الذي نسخته يحتوي على قيمة الـ refresh_token بدقة.')
+                print('✅ تم تجديد الصلاحية بنجاح.')
+            except Exception as e:
+                print('❌ فشل تجديد الـ Token: ' + str(e))
                 return
 
             access_token = creds.token
-            
-            print('جاري قراءة ملف الإكسل وبدء النشر التلقائي عبر GitHub...')
-            try:
-                df = pd.read_excel(excel_file)
-            except Exception as e:
-                print('خطأ في قراءة ملف الإكسل: ' + str(e))
-                return
-
-            url = 'https://www.googleapis.com/blogger/v3/blogs/' + blog_id + '/posts/'
             headers = {'Authorization': 'Bearer ' + access_token}
-            
-            default_price = '150'
-            default_category = 'protection'
 
-            for index, row in df.iterrows():
-                title = str(row.get('اسم المنتج (Title)', 'منتج بدون اسم')).strip()
-                color = str(row.get('اللون (Color)', 'أساسي')).strip()
-                ref = str(row.get('المرجع (SKU / Ref)', 'غير متوفر')).strip()
-                img_url = str(row.get('رابط الصورة (Image URL)', '')).strip()
-                desc = str(row.get('الوصف والمواصفات (Description)', 'لا توجد تفاصيل إضافية.')).strip()
-                
-                full_title = title + ' - ' + color
-                
-                post_content = ''
-                if img_url:
-                    post_content = post_content + '<img src=\'' + html.escape(img_url) + '\' />\n'
-                
-                post_content = post_content + '<p>التصنيف: ' + default_category + '</p>\n'
-                post_content = post_content + '<p>الماركة: lap</p>\n'
-                post_content = post_content + '<p>اللون: ' + color + '</p>\n'
-                post_content = post_content + '<p>المرجع: ' + ref + '</p>\n'
-                post_content = post_content + '<p>السعر الإجمالي: ' + default_price + '</p>\n'
-                post_content = post_content + '<p>' + html.escape(desc) + '</p>'
-
-                payload = {
-                    'kind': 'blogger#post',
-                    'title': full_title,
-                    'content': post_content,
-                    'status': 'DRAFT',
-                    'labels': [default_category]
-                }
-                
-                print('جاري رفع المنتج: ' + full_title)
-                
-                try:
-                    response = requests.post(url, json=payload, headers=headers)
-                    if response.status_code == 200 or response.status_code == 201:
-                        print('✅ تم رفع المنتج بنجاح كمسودة!')
-                    else:
-                        print('❌ فشل الرفع. كود الخطأ: ' + str(response.status_code))
-                        print(response.text)
-                except Exception as req_err:
-                    print('حدث خطأ في الاتصال: ' + str(req_err))
+            print('\n=== 🧪 3. فحص معلومات الحساب والمدونات المتاحة له ===')
+            list_url = 'https://www.googleapis.com/blogger/v3/users/self/blogs'
+            try:
+                res = requests.get(list_url, headers=headers)
+                if res.status_code == 200:
+                    blogs_data = res.json()
+                    print('✅ نجح الاتصال بجوجل! الحساب الحالي لديه صلاحية على المدونات التالية:')
+                    found = False
+                    for b in blogs_data.get('items', []):
+                        is_target = '⭐ (المدونة المستهدفة حالياً)' if str(b.get('id')) == blog_id else ''
+                        print('- اسم المدونة: ' + str(b.get('name')) + ' | المعرف (ID): ' + str(b.get('id')) + ' ' + is_target)
+                        if str(b.get('id')) == blog_id:
+                            found = True
                     
-                time.sleep(1)
+                    if not found:
+                        print('⚠️ تحذير: المدونة المستهدفة (' + blog_id + ') ليست من ضمن المدونات التي يمتلك الحساب صلاحية عليها!')
+                else:
+                    print('❌ فشل جلب قائمة المدونات المتاحة للحساب. كود الخطأ: ' + str(res.status_code))
+                    print(res.text)
+            except Exception as e:
+                print('❌ حدث خطأ أثناء الاتصال: ' + str(e))
 
-        publish()
+            print('\n=== 🧪 4. فحص الصلاحية المباشرة للمدونة ===')
+            blog_url = 'https://www.googleapis.com/blogger/v3/blogs/' + blog_id
+            try:
+                res = requests.get(blog_url, headers=headers)
+                if res.status_code == 200:
+                    print('✅ الحساب الحالي لديه صلاحية قراءة كاملة على المدونة المستهدفة!')
+                    print('اسم المدونة المستهدفة الفعلي: ' + str(res.json().get('name')))
+                else:
+                    print('❌ لا توجد صلاحية مباشرة على هذه المدونة المحددة. كود الخطأ: ' + str(res.status_code))
+                    print(res.text)
+            except Exception as e:
+                print('❌ حدث خطأ أثناء محاولة جلب بيانات المدونة: ' + str(e))
+
+        run_tests()
         "
