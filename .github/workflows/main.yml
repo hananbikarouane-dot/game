@@ -56,15 +56,15 @@ jobs:
                 scopes=['https://www.googleapis.com/auth/blogger']
             )
             
-            # تحديث الـ Token تلقائياً في حال انتهت صلاحيته (الـ 60 دقيقة)
-            print('جاري التحقق من صلاحية الـ Token وتحديثه أوتوماتيكياً...')
-            if creds.expired or not creds.valid:
-                try:
-                    creds.refresh(Request())
-                    print('🔄 تم تجديد صلاحية الدخول بنجاح!')
-                except Exception as refresh_err:
-                    print('❌ فشل تجديد الصلاحية تلقائياً: ' + str(refresh_err))
-                    return
+            # إجبار التجديد دائماً لتفادي انتهاء صلاحية الـ Access Token المؤقت
+            print('جاري تجديد صلاحية الـ Token بشكل إجباري لتفادي الحظر...')
+            try:
+                creds.refresh(Request())
+                print('🔄 تم تجديد صلاحية الدخول بنجاح وصناعة مفتاح جديد!')
+            except Exception as refresh_err:
+                print('❌ فشل تجديد الصلاحية تلقائياً: ' + str(refresh_err))
+                print('تنبيه: تأكد من أن الـ token.json الذي نسخته يحتوي على قيمة الـ refresh_token بدقة.')
+                return
 
             access_token = creds.token
             
