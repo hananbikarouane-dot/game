@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: # تشغيل يدوي
+  workflow_dispatch: # يتيح لك التشغيل اليدوي بضغطة زر من الموقع
 
 jobs:
   publish-products:
@@ -22,11 +22,11 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pandas openpyxl requests google-auth google-auth-oauthlib google-auth-httplib2
+        pip install pandas openpyxl requests google-auth
 
     - name: Run API Publisher Tool
       env:
-        OAUTH_JSON: ${{ secrets.BLOGGER_OAUTH_JSON }}
+        TOKEN_JSON: ${{ secrets.BLOGGER_TOKEN_JSON }}
         BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
       run: |
         python -c "
@@ -36,32 +36,69 @@ jobs:
         import requests
         import html
         import time
-        from google_auth_oauthlib.flow import InstalledAppFlow
-        from google.auth.transport.requests import Request
-        from google.oauth2.credentials import Credentials
 
         def publish():
             excel_file = 'lap_omega_all_colors.xlsx'
             blog_id = os.environ['BLOG_ID']
-            oauth_info = json.loads(os.environ['OAUTH_JSON'])
             
-            # نحدد الصلاحيات المطلوبة للوصول الكامل لمدونة بلوجر الخاصة بك
-            scopes = ['https://www.googleapis.com/auth/blogger']
+            # قراءة مفاتيح الوصول من الـ Secrets وتجهيزها
+            token_info = json.loads(os.environ['TOKEN_JSON'])
+            access_token = token_info.get('token')
             
-            print('جاري تهيئة الاتصال والمصادقة الأمنية مع جوجل...')
+            print('جاري قراءة ملف الإكسل وبدء النشر التلقائي عبر GitHub...')
+            try:
+                df = pd.read_excel(excel_file)
+            except Exception as e:
+                print('خطأ في قراءة ملف الإكسل: ' + str(e))
+                return
+
+            url = 'https://www.googleapis.com/blogger/v3/blogs/' + blog_id + '/posts/'
+            headers = {'Authorization': 'Bearer ' + access_token}
             
-            # نقوم ببناء تدفق المصادقة للحصول على رمز الدخول بصفتك مالك المدونة
-            # ملاحظة: في المرة الأولى للتشغيل محلياً قد يتطلب ذلك تسجيل الدخول وتوليد ملف credentials.json 
-            # لحفظ الجلسة وتفادي تكرار طلب تسجيل الدخول.
-            flow = InstalledAppFlow.from_client_config(oauth_info, scopes=scopes)
-            
-            # بما أن GitHub Actions يعمل بسيرفرات مغلقة، يجب تشغيل التدفق بنمط الكونسول أو محلياً
-            # لتوليد الـ credentials، ثم رفعها للـ Secrets.
-            # كخيار بديل لتفادي تعقيدات تشغيل الـ Flow التفاعلي على السيرفر:
-            # يمكنك تشغيل هذا السكربت على جهازك لمرة واحدة وسيقوم بإنشاء ملف token.json،
-            # وبدلاً من تكرار العملية، سنعتمد على الكود التالي لإتمام النشر:
-            
-            print('تنبيه: لتجنب عقبة تشغيل الواجهة الرسومية بالمصادقة داخل GitHub Actions، يُفضل تشغيل الملف محلياً على جهازك أول مرة لإنشاء ملف token.json.')
-            
+            default_price = '150'
+            default_category = 'protection'
+
+            for index, row in df.iterrows():
+                title = str(row.get('اسم المنتج (Title)', 'منتج بدون اسم')).strip()
+                color = str(row.get('اللون (Color)', 'أساسي')).strip()
+                ref = str(row.get('المرجع (SKU / Ref)', 'غير متوفر')).strip()
+                img_url = str(row.get('رابط الصورة (Image URL)', '')).strip()
+                desc = str(row.get('الوصف والمواصفات (Description)', 'لا توجد تفاصيل إضافية.')).strip()
+                
+                full_title = title + ' - ' + color
+                
+                post_content = ''
+                if img_url:
+                    post_content = post_content + '<img src=\'' + html.escape(img_url) + '\' />\n'
+                
+                post_content = post_content + '<p>التصنيف: ' + default_category + '</p>\n'
+                post_content = post_content + '<p>الماركة: lap</p>\n'
+                post_content = post_content + '<p>اللون: ' + color + '</p>\n'
+                post_content = post_content + '<p>المرجع: ' + ref + '</p>\n'
+                post_content = post_content + '<p>السعر الإجمالي: ' + default_price + '</p>\n'
+                post_content = post_content + '<p>' + html.escape(desc) + '</p>'
+
+                payload = {
+                    'kind': 'blogger#post',
+                    'title': full_title,
+                    'content': post_content,
+                    'status': 'DRAFT',
+                    'labels': [default_category]
+                }
+                
+                print('جاري رفع المنتج: ' + full_title)
+                
+                try:
+                    response = requests.post(url, json=payload, headers=headers)
+                    if response.status_code == 200 or response.status_code == 201:
+                        print('✅ تم رفع المنتج بنجاح كمسودة!')
+                    else:
+                        print('❌ فشل الرفع. كود الخطأ: ' + str(response.status_code))
+                        print(response.text)
+                except Exception as req_err:
+                    print('حدث خطأ في الاتصال: ' + str(req_err))
+                    
+                time.sleep(1)
+
         publish()
         "
