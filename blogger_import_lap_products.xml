@@ -1,0 +1,423 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns='http://www.w3.org/2005/Atom'
+      xmlns:openSearch='http://a9.com/-/spec/opensearch/1.1/'
+      xmlns:gd='http://schemas.google.com/g/2005'
+      xmlns:thr='http://purl.org/syndication/thread/1.0'>
+  <title type='text'>Blogger Import Feed</title>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>LECTEUR CARTE - Noir</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/10858-Lecteur-Carte-OMEGA-Noir.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Noir&lt;/p&gt;
+&lt;p&gt;المرجع: 10858&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>LECTEUR CARTE - Blanc</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/10858-Lecteur-Carte-OMEGA-Blanc.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Blanc&lt;/p&gt;
+&lt;p&gt;المرجع: 10858&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>LECTEUR CARTE - Marfil</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/10858-Lecteur-Carte-OMEGA-Marfil.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Marfil&lt;/p&gt;
+&lt;p&gt;المرجع: 10858&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>LECTEUR CARTE - Cappuccino</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/10858-Lecteur-Carte-OMEGA-Cappu.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Cappuccino&lt;/p&gt;
+&lt;p&gt;المرجع: 10858&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>LECTEUR CARTE - Marron</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/10858-Lecteur-Carte-OMEGA-Marron.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Marron&lt;/p&gt;
+&lt;p&gt;المرجع: 10858&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>LECTEUR CARTE - Gris Clair</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/10858-Lecteur-Carte-OMEGA-Gris-Clair.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Gris Clair&lt;/p&gt;
+&lt;p&gt;المرجع: 10858&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>LECTEUR CARTE - Gris Fonce</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/10858-Lecteur-Carte-OMEGA-Gris-Fonce.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Gris Fonce&lt;/p&gt;
+&lt;p&gt;المرجع: 10858&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>LECTEUR CARTE - Gris Noir</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/10858-Lecteur-Carte-OMEGA-Gris-Noir.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Gris Noir&lt;/p&gt;
+&lt;p&gt;المرجع: 10858&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>DOUBLE PRISE 2 P + TERRE - Noir</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/19-Double-prise-OMEGA-16A-Noir-1.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Noir&lt;/p&gt;
+&lt;p&gt;المرجع: 20855&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>DOUBLE PRISE 2 P + TERRE - Blanc</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/19-Double-prise-OMEGA-16A-Blanc-1.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Blanc&lt;/p&gt;
+&lt;p&gt;المرجع: 20855&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>DOUBLE PRISE 2 P + TERRE - Marfil</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/19-Double-prise-OMEGA-16A-Marfil-1.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Marfil&lt;/p&gt;
+&lt;p&gt;المرجع: 20855&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>DOUBLE PRISE 2 P + TERRE - Cappuccino</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/19-Double-prise-OMEGA-16A-Cappu-1.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Cappuccino&lt;/p&gt;
+&lt;p&gt;المرجع: 20855&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>DOUBLE PRISE 2 P + TERRE - Marron</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/19-Double-prise-OMEGA-16A-Marron-1.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Marron&lt;/p&gt;
+&lt;p&gt;المرجع: 20855&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>DOUBLE PRISE 2 P + TERRE - Gris Clair</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/19-Double-prise-OMEGA-16A-Gris-Clair-1.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Gris Clair&lt;/p&gt;
+&lt;p&gt;المرجع: 20855&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>DOUBLE PRISE 2 P + TERRE - Gris Fonce</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/19-Double-prise-OMEGA-16A-Gris-Fonce-1.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Gris Fonce&lt;/p&gt;
+&lt;p&gt;المرجع: 20855&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>DOUBLE PRISE 2 P + TERRE - Gris Noir</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/19-Double-prise-OMEGA-16A-Gris-Noir-2.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Gris Noir&lt;/p&gt;
+&lt;p&gt;المرجع: 20855&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>SONNETTE ENCASTRÉE - Noir</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/10865-Sonette-Elctrique-OMEGA-Noir-1.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Noir&lt;/p&gt;
+&lt;p&gt;المرجع: 10865&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>SONNETTE ENCASTRÉE - Blanc</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/10865-Sonette-Elctrique-OMEGA-Blanc-1.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Blanc&lt;/p&gt;
+&lt;p&gt;المرجع: 10865&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>SONNETTE ENCASTRÉE - Marfil</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/10865-Sonette-Elctrique-OMEGA-Marfil-1.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Marfil&lt;/p&gt;
+&lt;p&gt;المرجع: 10865&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>SONNETTE ENCASTRÉE - Cappuccino</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/10865-Sonette-Elctrique-OMEGA-Cappu-1.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Cappuccino&lt;/p&gt;
+&lt;p&gt;المرجع: 10865&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>SONNETTE ENCASTRÉE - Marron</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/10865-Sonette-Elctrique-OMEGA-Marron-1.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Marron&lt;/p&gt;
+&lt;p&gt;المرجع: 10865&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>SONNETTE ENCASTRÉE - Gris Clair</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/10865-Sonette-Elctrique-OMEGA-Gris-Clair-1.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Gris Clair&lt;/p&gt;
+&lt;p&gt;المرجع: 10865&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>SONNETTE ENCASTRÉE - Gris Fonce</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/10865-Sonette-Elctrique-OMEGA-Gris-Fonce-1.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Gris Fonce&lt;/p&gt;
+&lt;p&gt;المرجع: 10865&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>SONNETTE ENCASTRÉE - Gris Noir</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/10865-Sonette-Elctrique-OMEGA-Gris-Noir-2.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Gris Noir&lt;/p&gt;
+&lt;p&gt;المرجع: 10865&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>CHARGEUR USB DOUBLE TYPE C - Noir</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/20852-Prise-Type-c-Double-OMEGA-Noir-1.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Noir&lt;/p&gt;
+&lt;p&gt;المرجع: 20852&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>CHARGEUR USB DOUBLE TYPE C - Blanc</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/20852-Prise-Type-c-Double-OMEGA-Blanc-1.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Blanc&lt;/p&gt;
+&lt;p&gt;المرجع: 20852&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>CHARGEUR USB DOUBLE TYPE C - Marfil</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/20852-Prise-Type-c-Double-OMEGA-Marfil-1.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Marfil&lt;/p&gt;
+&lt;p&gt;المرجع: 20852&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>CHARGEUR USB DOUBLE TYPE C - Cappuccino</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/20852-Prise-Type-c-Double-OMEGA-Cappu-1.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Cappuccino&lt;/p&gt;
+&lt;p&gt;المرجع: 20852&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>CHARGEUR USB DOUBLE TYPE C - Marron</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/20852-Prise-Type-c-Double-OMEGA-Marron-1.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Marron&lt;/p&gt;
+&lt;p&gt;المرجع: 20852&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>CHARGEUR USB DOUBLE TYPE C - Gris Clair</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/20852-Prise-Type-c-Double-OMEGA-Gris-Claire-1.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Gris Clair&lt;/p&gt;
+&lt;p&gt;المرجع: 20852&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>CHARGEUR USB DOUBLE TYPE C - Gris Fonce</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/20852-Prise-Type-c-Double-OMEGA-Gris-Fonce-1.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Gris Fonce&lt;/p&gt;
+&lt;p&gt;المرجع: 20852&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+  <entry>
+    <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/blogger/2008/kind#post'/>
+    <title type='text'>CHARGEUR USB DOUBLE TYPE C - Gris Noir</title>
+    <content type='html'>&lt;img src=&#x27;https://lap-electric.ma/wp-content/uploads/2026/01/20852-Prise-Type-c-Double-OMEGA-Gris-Noir-2.png&#x27; /&gt;
+&lt;p&gt;التصنيف: protection&lt;/p&gt;
+&lt;p&gt;الماركة: lap&lt;/p&gt;
+&lt;p&gt;اللون: Gris Noir&lt;/p&gt;
+&lt;p&gt;المرجع: 20852&lt;/p&gt;
+&lt;p&gt;السعر الإجمالي: 150&lt;/p&gt;
+&lt;p&gt;Couleur: Noir, Blanc, Marfil, Cappuccino, Marron, Gris-Clair, Gris Foncé, Gris Noir&lt;/p&gt;</content>
+    <published>2026-07-14T02:26:30Z</published>
+    <control xmlns='http://appspace.internal/atom-protocol'><draft>yes</draft></control>
+  </entry>
+</feed>
