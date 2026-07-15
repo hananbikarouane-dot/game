@@ -3,6 +3,7 @@ import json
 import time
 import random
 import glob
+import base64
 import pandas as pd
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
@@ -95,7 +96,7 @@ def publish_combined_products():
         category = "commande"   
         price = "150"           
         
-        # استخراج قائمة الألوان والروابط المكسورة الحظر
+        # استخراج قائمة الألوان والروابط
         all_colors = []
         variants_data = []
         
@@ -109,13 +110,41 @@ def publish_combined_products():
                     "image": bypass_hotlink(c_url)
                 })
         
-        # تحويل الخيارات إلى JSON ليمرر داخل وسم السكربت
-        json_variants = json.dumps(variants_data, ensure_ascii=False)
+        # كود الجافا سكريبت النقي بدون أي تعليقات أو أسطر
+        raw_js = f"""
+        (function() {{
+            var refId = "{ref_id}";
+            var btns = document.querySelectorAll('.color-btn-' + refId);
+            var img = document.getElementById('main-product-img-' + refId);
+            var txt = document.getElementById('current-color-text-' + refId);
+            if(btns.length > 0) {{
+                btns[0].style.borderColor = "#007bff";
+                btns[0].style.backgroundColor = "#f0f7ff";
+            }}
+            btns.forEach(function(b) {{
+                b.addEventListener('click', function() {{
+                    var tImg = this.getAttribute('data-image');
+                    var tCol = this.getAttribute('data-color');
+                    if(img && tImg) img.src = tImg;
+                    if(txt) txt.innerText = tCol;
+                    btns.forEach(function(x) {{
+                        x.style.borderColor = "#ccc";
+                        x.style.backgroundColor = "#fff";
+                    }});
+                    this.style.borderColor = "#007bff";
+                    this.style.backgroundColor = "#f0f7ff";
+                }});
+            }});
+        }})();
+        """
+        
+        # تحويل كود الجافا سكريبت إلى Base64 لمنع القالب تماماً من قراءته كنص وطباعته
+        b64_js = base64.b64encode(raw_js.encode('utf-8')).decode('utf-8')
 
-        # دمج الألوان وبناء واجهة تفاعلية داخل محتوى التدوينة مباشرة مع حماية الشفرات من الظهور
+        # بناء محتوى التدوينة مع إخفاء البيانات تماماً داخل سمات HTML بدلاً من وسوم مستقلة
         post_content = f"""<div class="product-container" style="text-align: right; direction: rtl; font-family: sans-serif;">
         
-    <!-- الصورة الرئيسية للمنتج مع مُعرّف خاص للتحكم بها -->
+    <!-- الصورة الرئيسية -->
     <div class="product-main-image-wrapper" style="text-align: center; margin-bottom: 20px;">
         <img id="main-product-img-{ref_id}" src="{main_image}" alt="{product_title}" style="max-width:100%; max-height: 400px; object-fit: contain; border-radius: 8px; border: 1px solid #ddd; padding: 5px;" />
     </div>
@@ -125,19 +154,11 @@ def publish_combined_products():
     <p><strong>التصنيف:</strong> {category}</p>
     <p><strong>المرجع:</strong> {ref_id}</p>
 
-    <!-- مكان عرض اسم اللون الحالي المختار -->
     <p><strong>Couleur:</strong> <span id="current-color-text-{ref_id}">{all_colors[0] if all_colors else ''}</span></p>
 
-    <!-- حاوية خيارات الألوان التفاعلية -->
+    <!-- أزرار خيارات الألوان -->
     <div class="color-variants-selector" style="display: flex; gap: 10px; flex-wrap: wrap; margin: 15px 0;">
         {"".join([f'<button type="button" class="color-btn-{ref_id}" data-color="{v["color"]}" data-image="{v["image"]}" style="padding: 8px 15px; border: 1px solid #ccc; background: #fff; cursor: pointer; border-radius: 4px; font-weight: bold; transition: all 0.2s;">{v["color"]}</button>' for v in variants_data])}
-    </div>
-
-    <!-- تم إخفاء بيانات JSON تماماً لمنع بلوجر من عرضها للزائر -->
-    <div style="display:none !important; visibility:hidden; height:0; width:0; overflow:hidden;">
-        <script type="application/json" class="product-variants-json">
-        {json_variants}
-        </script>
     </div>
 
     <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
@@ -145,43 +166,9 @@ def publish_combined_products():
     <div class="product-description" style="line-height: 1.6; color: #555;">
         <p>{desc}</p>
     </div>
-</div>
 
-<!-- وضع السكربت داخل وسم مغلف ومحمي يمنع بلوجر من طباعته كنص -->
-<div style="display:none !important; visibility:hidden; height:0; width:0; overflow:hidden;">
-<script type="text/javascript">
-//<![CDATA[
-(function() {{
-    var refId = "{ref_id}";
-    var buttons = document.querySelectorAll('.color-btn-' + refId);
-    var mainImg = document.getElementById('main-product-img-' + refId);
-    var colorText = document.getElementById('current-color-text-' + refId);
-
-    if(buttons.length > 0) {{
-        buttons[0].style.borderColor = "#007bff";
-        buttons[0].style.backgroundColor = "#f0f7ff";
-    }}
-
-    buttons.forEach(function(btn) {{
-        btn.addEventListener('click', function() {{
-            var targetImage = this.getAttribute('data-image');
-            var targetColor = this.getAttribute('data-color');
-            
-            if(mainImg && targetImage) mainImg.src = targetImage;
-            if(colorText) colorText.innerText = targetColor;
-            
-            buttons.forEach(function(b) {{
-                b.style.borderColor = "#ccc";
-                b.style.backgroundColor = "#fff";
-            }});
-            
-            this.style.borderColor = "#007bff";
-            this.style.backgroundColor = "#f0f7ff";
-        }});
-    }});
-}})();
-//]]>
-</script>
+    <!-- حيلة الصورة الوهمية: يتم استدعاء الكود المشفر عبر حدث onerror بأمان تام بدون طباعة أي نصوص في القالب -->
+    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="eval(atob('{b64_js}')); this.parentNode.removeChild(this);" style="display:none !important;" />
 </div>
 """
 
@@ -196,7 +183,7 @@ def publish_combined_products():
         try:
             request = service.posts().insert(blogId=blog_id, body=post_body, isDraft=False)
             request.execute()
-            print(f"✅ Published: {product_title} with interactive dynamic image switching")
+            print(f"✅ Published: {product_title} successfully with stealth script injection")
             count += 1
             
         except Exception as e:
