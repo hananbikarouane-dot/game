@@ -14,7 +14,7 @@ def find_excel_file():
     if excel_files:
         print(f"📂 تم العثور تلقائياً على ملف الإكسل: {excel_files[0]}")
         return excel_files[0]
-    return "lap_omega_all_colors (2).xlsx"
+    return "lap_omega_all_colors.xlsx"
 
 EXCEL_FILE_PATH = find_excel_file()
 
