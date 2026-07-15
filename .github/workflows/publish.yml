@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'lap_omega_all_colors.xlsx'
+  workflow_dispatch: # 👈 هذا السطر يتيح لك تشغيله يدوياً في أي وقت!
 
 jobs:
   publish:
