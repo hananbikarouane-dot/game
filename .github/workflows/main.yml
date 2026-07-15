@@ -1,17 +1,16 @@
-name: Deploy Products Directly to Blogger API
+name: Auto Publish Products to Blogger
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch: # تشغيل يدوي
+    paths:
+      - 'lap_omega_all_colors.xlsx'
 
 jobs:
-  publish-products:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout repository code
       uses: actions/checkout@v3
 
     - name: Set up Python
@@ -22,120 +21,10 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pandas openpyxl requests google-auth google-auth-oauthlib
+        pip install pandas openpyxl google-api-python-client google-auth-httplib2
 
-    - name: Run API Publisher Tool
+    - name: Run Publisher Script
       env:
-        TOKEN_JSON: ${{ secrets.BLOGGER_TOKEN_JSON }}
-        BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
-      run: |
-        python -c "
-        import os
-        import json
-        import pandas as pd
-        import requests
-        import html
-        import time
-        from google.oauth2.credentials import Credentials
-        from google.auth.transport.requests import Request
-
-        def publish():
-            excel_file = 'lap_omega_all_colors.xlsx'
-            blog_id = os.environ['BLOG_ID'].strip()
-            
-            print('=== 🔍 1. فحص وتحليل بيئة العمل والمتغيرات ===')
-            print('مُعرّف المدونة المستهدف (BLOG_ID): ' + blog_id)
-            
-            try:
-                token_info = json.loads(os.environ['TOKEN_JSON'])
-                print('✅ تم تحميل ملف الـ Token JSON بنجاح.')
-            except Exception as e:
-                print('❌ فشل قراءة الـ Token JSON: ' + str(e))
-                return
-            
-            # استخراج الـ Access Token الحالي مباشرة لاستخدامه
-            access_token = token_info.get('token')
-            
-            # محاولة التجديد التلقائي فقط إذا كان الـ client_secret متوفراً
-            if token_info.get('client_secret'):
-                print('\n=== 🔄 2. محاولة تجديد الـ Token تلقائياً ===')
-                try:
-                    creds = Credentials(
-                        token=token_info.get('token'),
-                        refresh_token=token_info.get('refresh_token'),
-                        token_uri=token_info.get('token_uri'),
-                        client_id=token_info.get('client_id'),
-                        client_secret=token_info.get('client_secret'),
-                        scopes=['https://www.googleapis.com/auth/blogger']
-                    )
-                    creds.refresh(Request())
-                    access_token = creds.token
-                    print('🔄 تم تجديد صلاحية الدخول بنجاح وصناعة مفتاح جديد!')
-                except Exception as refresh_err:
-                    print('⚠️ تحذير: فشل التجديد التلقائي، سنحاول النشر باستخدام الـ Token الحالي: ' + str(refresh_err))
-            else:
-                print('\nℹ️ سيتم استخدام الـ Access Token النشط مباشرة دون طلب التجديد لعدم وجود client_secret.')
-
-            print('جاري قراءة ملف الإكسل وبدء النشر التلقائي...')
-            try:
-                df = pd.read_excel(excel_file)
-            except Exception as e:
-                print('❌ خطأ في قراءة ملف الإكسل: ' + str(e))
-                return
-
-            # الرابط الصحيح دون شرطة مائلة لمنع إعادة التوجيه
-            url = 'https://www.googleapis.com/blogger/v3/blogs/' + blog_id + '/posts'
-            
-            # الترويسات الصحيحة
-            headers = {
-                'Authorization': 'Bearer ' + access_token,
-                'Content-Type': 'application/json'
-            }
-            
-            default_price = '150'
-            default_category = 'protection'
-
-            for index, row in df.iterrows():
-                title = str(row.get('اسم المنتج (Title)', 'منتج بدون اسم')).strip()
-                color = str(row.get('اللون (Color)', 'أساسي')).strip()
-                ref = str(row.get('المرجع (SKU / Ref)', 'غير متوفر')).strip()
-                img_url = str(row.get('رابط الصورة (Image URL)', '')).strip()
-                desc = str(row.get('الوصف والمواصفات (Description)', 'لا توجد تفاصيل إضافية.')).strip()
-                
-                full_title = title + ' - ' + color
-                
-                post_content = ''
-                if img_url:
-                    post_content = post_content + '<img src=\'' + html.escape(img_url) + '\' />\n'
-                
-                post_content = post_content + '<p>التصنيف: ' + default_category + '</p>\n'
-                post_content = post_content + '<p>الماركة: lap</p>\n'
-                post_content = post_content + '<p>اللون: ' + color + '</p>\n'
-                post_content = post_content + '<p>المرجع: ' + ref + '</p>\n'
-                post_content = post_content + '<p>السعر الإجمالي: ' + default_price + '</p>\n'
-                post_content = post_content + '<p>' + html.escape(desc) + '</p>'
-
-                payload = {
-                    'kind': 'blogger#post',
-                    'title': full_title,
-                    'content': post_content,
-                    'status': 'DRAFT',
-                    'labels': [default_category]
-                }
-                
-                print('جاري رفع المنتج: ' + full_title)
-                
-                try:
-                    response = requests.post(url, json=payload, headers=headers)
-                    if response.status_code == 200 or response.status_code == 201:
-                        print('✅ تم رفع المنتج بنجاح كمسودة!')
-                    else:
-                        print('❌ فشل الرفع. كود الخطأ: ' + str(response.status_code))
-                        print(response.text)
-                except Exception as req_err:
-                    print('حدث خطأ في الاتصال: ' + str(req_err))
-                    
-                time.sleep(1)
-
-        publish()
-        "
+        BLOG_ID: ${{ secrets.BLOG_ID }}
+        BLOGGER_TOKEN: ${{ secrets.BLOGGER_TOKEN }}
+      run: python publish_from_excel.py
