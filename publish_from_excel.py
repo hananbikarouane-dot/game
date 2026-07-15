@@ -58,7 +58,7 @@ def publish_combined_products():
         
     df = pd.read_excel(excel_file_path)
     
-    # تجميع البيانات بناءً على "المرجع (SKU / Ref)"
+    # تجميع البيانات بناءً على "المرجع (SKU / Ref)" لدمج الألوان في منتج واحد
     grouped = df.groupby('المرجع (SKU / Ref)')
     unique_refs = list(grouped.groups.keys())
     
@@ -89,30 +89,35 @@ def publish_combined_products():
         product_title = first_row['اسم المنتج (Title)']
         desc = first_row['الوصف والمواصفات (Description)']
         
+        # الصورة الرئيسية للمنتج (تظهر عند فتح الصفحة لأول مرة)
         main_image = bypass_hotlink(first_row['رابط الصورة (Image URL)'])
         
         brand = "lap"           
         category = "commande"   
         price = "150"           
         
-        # 🎨 استخراج قائمة الألوان الفريدة وكتابتها كل واحدة في سطر مستقل تماماً
-        # القوالب الاحترافية في بلوجر تقرأ خيارات المنتج عندما تكتب "اللون: اسم" منفصلة في كل سطر
+        # 🎨 ربط كل لون برابط الصورة المباشرة المفتوحة الحظر الخاصة به
         colors_lines_html = ""
         for _, row in product_group.iterrows():
             c_name = str(row['اللون (Color)']).strip()
-            if c_name:
-                colors_lines_html += f"<p>اللون: {c_name}</p>\n"
+            c_url = str(row['رابط الصورة (Image URL)']).strip()
+            
+            if c_name and c_url:
+                # كسر حظر رابط الصورة الخاص باللون المحدد
+                safe_color_image = bypass_hotlink(c_url)
+                
+                # طباعة اسم اللون ومرفق معه رابط صورته ليفهم القالب عملية التبديل الديناميكي
+                colors_lines_html += f"<p>اللون: {c_name} | {safe_color_image}</p>\n"
 
-        # صياغة محتوى التدوينة بالهيكلية البرمجية التي يطلبها قالبك
+        # صياغة محتوى التدوينة بالهيكلية البرمجية المتوافقة مع سكربت القالب
         post_content = f"""<div style="text-align: right; direction: rtl;">
 <img src="{main_image}" alt="{product_title}" style="max-width:100%; display:block; margin-bottom: 20px; border-radius: 8px;" />
 <p>السعر الإجمالي: {price}</p>
 <p>الماركة: {brand}</p>
 <p>التصنيف: {category}</p>
 <p>المرجع: {ref_id}</p>
-<!-- بداية خيارات الألوان المنفصلة للقالب -->
+<!-- خيارات الألوان المربوطة ديناميكياً بالصور لعرض التغيير الفوري -->
 {colors_lines_html}
-<!-- نهاية خيارات الألوان -->
 <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
 <div class="product-description" style="line-height: 1.6; color: #555;">
     <p>{desc}</p>
@@ -130,7 +135,7 @@ def publish_combined_products():
         try:
             request = service.posts().insert(blogId=blog_id, body=post_body, isDraft=False)
             request.execute()
-            print(f"✅ Published Combined Product with variations: {product_title} (RÉF: {ref_id})")
+            print(f"✅ Published Dynamic Product: {product_title} (RÉF: {ref_id})")
             count += 1
             
         except Exception as e:
@@ -140,7 +145,7 @@ def publish_combined_products():
 
     with open(INDEX_FILE_PATH, 'w') as f:
         f.write(str(current_index))
-    print(f"📝 تم حفظ مؤشر التوقف الحالي عند المنتج رقم: {current_index}")
+    print(f"📝 تم حفظ مؤشر التوقف عند المنتج رقم: {current_index}")
 
 if __name__ == '__main__':
     publish_combined_products()
