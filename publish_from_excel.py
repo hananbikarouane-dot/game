@@ -8,7 +8,7 @@ from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 
 SCOPES = ['https://www.googleapis.com/auth/blogger']
-EXCEL_FILE_PATH = 'lap_omega_all_colors (2).xlsx'
+EXCEL_FILE_PATH = 'lap_omega_all_colors.xlsx'
 INDEX_FILE_PATH = 'last_product_index.txt'
 
 def get_blogger_service():
