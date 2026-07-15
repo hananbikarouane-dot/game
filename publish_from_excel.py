@@ -6,7 +6,7 @@ import json
 # --- إعدادات الحساب والمدونة ---
 API_KEY = "ضع_مفتاح_الـ_API_الخاص_بـ_غوغل_هنا"
 BLOG_ID = "ضع_معرف_المدونة_BLOG_ID_هنا"
-EXCEL_FILE_PATH = "products.xlsx"  # اسم ملف الإكسل الخاص بك
+EXCEL_FILE_PATH = "lap_omega_all_colors.xlsx"  # اسم ملف الإكسل الخاص بك
 
 # --- دالة نشر تدوينة جديدة في بلوجر ---
 def create_blogger_post(title, content, tags):
