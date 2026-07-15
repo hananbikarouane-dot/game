@@ -11,18 +11,6 @@ from googleapiclient.discovery import build
 SCOPES = ['https://www.googleapis.com/auth/blogger']
 INDEX_FILE_PATH = 'last_product_index.txt'
 
-# قاموس لتحويل أسماء الألوان إلى أكواد اللون السداسية (Hex Codes) لتظهر الأزرار ملونة بشكل صحيح
-COLOR_MAP = {
-    'noir': '#000000',
-    'blanc': '#FFFFFF',
-    'marfil': '#F5F5DC',
-    'cappuccino': '#4B3621',
-    'marron': '#8B4513',
-    'gris clair': '#D3D3D3',
-    'gris fonce': '#A9A9A9',
-    'gris noir': '#2F4F4F'
-}
-
 def get_blogger_service():
     token_str = os.environ.get('BLOGGER_TOKEN')
     if not token_str:
@@ -70,7 +58,7 @@ def publish_combined_products():
         
     df = pd.read_excel(excel_file_path)
     
-    # تجميع البيانات بناءً على "المرجع (SKU / Ref)"
+    # تجميع البيانات بناءً على "المرجع (SKU / Ref)" لدمج الألوان في منتج واحد
     grouped = df.groupby('المرجع (SKU / Ref)')
     unique_refs = list(grouped.groups.keys())
     
@@ -101,44 +89,31 @@ def publish_combined_products():
         product_title = first_row['اسم المنتج (Title)']
         desc = first_row['الوصف والمواصفات (Description)']
         
-        # كسر حظر الصورة البارزة الأساسية للمنتج
+        # كسر حظر الصورة البارزة الأساسية
         main_image = bypass_hotlink(first_row['رابط الصورة (Image URL)'])
         
         brand = "lap"           
         category = "commande"   
         price = "150"           
         
-        # 🎨 إنشاء أزرار دائرية أنيقة لعرض خيارات الألوان المتوفرة بدون تكديس صور
-        color_swatches_html = '<div class="product-swatches" style="margin: 15px 0; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">'
-        
+        # تجميع أسماء الألوان من كل السطور المرتبطة بالمرجع وفصلها بفواصل كما يتوقع القالب
         all_colors_list = []
         for _, row in product_group.iterrows():
             c_name = str(row['اللون (Color)']).strip()
-            all_colors_list.append(c_name)
-            
-            # جلب كود اللون الخلفي للاستخدام في الأزرار
-            hex_color = COLOR_MAP.get(c_name.lower(), '#CCCCCC') 
-            
-            # تصميم الزر الدائري
-            color_swatches_html += f"""
-            <div title="{c_name}" style="width: 30px; height: 30px; background-color: {hex_color}; border: 2px solid #ddd; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"></div>
-            """
-        color_swatches_html += '</div>'
+            if c_name and c_name not in all_colors_list:
+                all_colors_list.append(c_name)
         
         colors_str = ", ".join(all_colors_list)
 
-        # صياغة المحتوى متوافقة مع متطلبات القالب النصية وبمظهر عصري
+        # 🌟 الصياغة النصية الدقيقة والمطابقة لـ Regex الخاص بالقالب
+        # تركنا سطر "اللون:" نظيفاً ومفصولاً بفواصل ليقوم قالبك ببناء المربعات تلقائياً
         post_content = f"""<div style="text-align: right; direction: rtl;">
 <img src="{main_image}" alt="{product_title}" style="max-width:100%; display:block; margin-bottom: 20px; border-radius: 8px;" />
 <p>السعر الإجمالي: {price}</p>
 <p>الماركة: {brand}</p>
 <p>التصنيف: {category}</p>
-<p>المرجع: {ref_id}</p>
-<p>اللون المختارتلقائياً: أساسي</p>
 <p>اللون: {colors_str}</p>
-<hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
-<h5 style="margin-bottom: 5px; color: #333;">الألوان المتاحة في المخزن:</h5>
-{color_swatches_html}
+<p>المرجع: {ref_id}</p>
 <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
 <div class="product-description" style="line-height: 1.6; color: #555;">
     <p>{desc}</p>
@@ -156,7 +131,7 @@ def publish_combined_products():
         try:
             request = service.posts().insert(blogId=blog_id, body=post_body, isDraft=False)
             request.execute()
-            print(f"✅ Published: {product_title} (RÉF: {ref_id})")
+            print(f"✅ Published Combined Product: {product_title} (RÉF: {ref_id})")
             count += 1
             
         except Exception as e:
@@ -166,7 +141,7 @@ def publish_combined_products():
 
     with open(INDEX_FILE_PATH, 'w') as f:
         f.write(str(current_index))
-    print(f"📝 تم حفظ مؤشر التوقف الحالي: {current_index}")
+    print(f"📝 تم حفظ مؤشر التوقف الحالي عند الحساب الفريد: {current_index}")
 
 if __name__ == '__main__':
     publish_combined_products()
