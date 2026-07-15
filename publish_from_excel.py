@@ -4,6 +4,7 @@ import pandas as pd
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 
+# استخدام النطاق الكامل والصحيح
 SCOPES = ['https://www.googleapis.com/auth/blogger']
 
 def get_blogger_service():
@@ -36,10 +37,9 @@ def publish_all_products():
         img_url = row['رابط الصورة (Image URL)']
         desc = row['الوصف والمواصفات (Description)']
         
-        # الإعدادات الافتراضية
         brand = "LAP"  
         category = "protection"  
-        price = "150"  # يمكنك تعديل السعر الافتراضي من هنا
+        price = "150"  
         
         post_content = f"""<div style="text-align: right; direction: rtl;">
 <img src="{img_url}" alt="{title}" style="max-width:100%; display:none;" />
@@ -54,17 +54,20 @@ def publish_all_products():
 <p>{desc}</p>
 </div>"""
 
+        # تعديل بنيوي: إرسال حالة المنشور كـ DRAFT داخل الـ body مباشرة
         post_body = {
             'kind': 'blogger#post',
             'blog': {'id': blog_id},
             'title': f"{title} - {color}",
-            'content': post_content
+            'content': post_content,
+            'status': 'DRAFT'  # 👈 تحديد الحالة هنا يمنع تعارض الصلاحيات
         }
         
         try:
-            request = service.posts().insert(blogId=blog_id, body=post_body, isDraft=True)
+            # نقوم بالاستدعاء بدون تمرير معامل isDraft في الرابط لتجنب تعارض الـ API
+            request = service.posts().insert(blogId=blog_id, body=post_body)
             request.execute()
-            print(f"✅ Published draft: {title} ({color})")
+            print(f"✅ Created draft: {title} ({color})")
         except Exception as e:
             print(f"❌ Error publishing {title}: {e}")
 
