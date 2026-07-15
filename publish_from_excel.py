@@ -1,131 +1,210 @@
-import pandas as pd
-import requests
-import json
 import os
+import json
+import time
+import random
 import glob
+import pandas as pd
+from google.oauth2.credentials import Credentials
+from google.auth.transport.requests import Request
+from googleapiclient.discovery import build
 
-# --- إعدادات الحساب والمدونة عبر البيئة المحمية (GitHub Actions Env) ---
-BLOG_ID = os.environ.get("BLOG_ID", "ضع_معرف_المدونة_هنا")
-BLOGGER_TOKEN = os.environ.get("BLOGGER_TOKEN") 
+SCOPES = ['https://www.googleapis.com/auth/blogger']
+INDEX_FILE_PATH = 'last_product_index.txt'
+
+def get_blogger_service():
+    token_str = os.environ.get('BLOGGER_TOKEN')
+    if not token_str:
+        raise ValueError("❌ BLOGGER_TOKEN not found in GitHub Secrets!")
+    
+    creds_info = json.loads(token_str)
+    creds = Credentials.from_authorized_user_info(creds_info, SCOPES)
+    
+    if not creds.valid:
+        if creds.expired and creds.refresh_token:
+            print("[~] التوكن منتهي... جاري التجديد تلقائياً...")
+            try:
+                creds.refresh(Request())
+            except Exception as e:
+                raise Exception(f"❌ فشل تجديد التوكن: {e}")
+        else:
+            raise Exception("❌ التوكن غير صالح.")
+            
+    return build('blogger', 'v3', credentials=creds)
 
 def find_excel_file():
-    # يبحث عن ملف الإكسل الخاص بك في المجلد
-    excel_files = glob.glob("*.xlsx") + glob.glob("*.xls")
+    excel_files = glob.glob("lap_omega*.xlsx")
+    if not excel_files:
+        excel_files = glob.glob("**/lap_omega*.xlsx", recursive=True)
     if excel_files:
-        print(f"📂 تم العثور تلقائياً على ملف الإكسل: {excel_files[0]}")
+        print(f"[✓] تم العثور على ملف البيانات: {excel_files[0]}")
         return excel_files[0]
-    return "lap_omega_all_colors.xlsx"
+    return None
 
-EXCEL_FILE_PATH = find_excel_file()
+def bypass_hotlink(url):
+    """تعديل رابط الصورة ليمر عبر خادم وسيط يكسر حظر الـ Hotlinking"""
+    if not isinstance(url, str):
+        return ""
+    clean_url = url.replace("https://", "").replace("http://", "")
+    return f"https://images.weserv.nl/?url={clean_url}"
 
-# --- دالة نشر تدوينة جديدة في بلوجر ---
-def create_blogger_post(title, content, tags):
-    url = f"https://www.googleapis.com/blogger/v3/blogs/{BLOG_ID}/posts/"
-    headers = {
-        "Authorization": f"Bearer {BLOGGER_TOKEN}",
-        "Content-Type": "application/json"
-    }
-    payload = {
-        "kind": "blogger#post",
-        "title": title,
-        "content": content,
-        "labels": tags
-    }
-    
-    if BLOGGER_TOKEN and BLOG_ID != "ضع_معرف_المدونة_هنا":
-        response = requests.post(url, headers=headers, json=payload)
-        if response.status_code in [200, 201]:
-            print(f"✔️ تم نشر المنتج بنجاح: {title}")
-        else:
-            print(f"❌ خطأ أثناء النشر لـ {title}: {response.text}")
-    else:
-        print(f"⚠️ وضع التجربة: تم تجهيز المنتج بنجاح: {title}")
-
-# --- 1. قراءة البيانات من ملف الإكسل ---
-try:
-    df = pd.read_excel(EXCEL_FILE_PATH)
-except Exception as e:
-    print(f"❌ خطأ في قراءة ملف الإكسل ({EXCEL_FILE_PATH}): {e}")
-    exit()
-
-# تنظيف أسماء الأعمدة من أي مسافات زائدة
-df.columns = [str(c).strip() for c in df.columns]
-
-# تحديد الأعمدة الصحيحة بناءً على ملفك المرفق
-col_title = 'اسم المنتج (Title)'
-col_color = 'اللون (Color)'
-col_ref = 'المرجع (SKU / Ref)'
-col_image = 'رابط الصورة (Image URL)'
-col_desc = 'الوصف والمواصفات (Description)'
-
-# --- 2. تجميع المنتجات بناءً على اسم المنتج ---
-grouped = df.groupby(col_title)
-print(f"📦 تم العثور على {len(grouped)} منتج فريد بعد دمج الألوان والخيارات.")
-
-# --- 3. معالجة كل منتج مدمج ونشره ---
-for product_name, group in grouped:
-    if pd.isna(product_name) or str(product_name).strip() == "":
-        continue
+def publish_combined_products():
+    blog_id = os.environ.get('BLOG_ID')
+    if not blog_id:
+        raise ValueError("❌ BLOG_ID not found in GitHub Secrets!")
         
-    first_row = group.iloc[0]
-    
-    # جلب البيانات الأساسية للمنتج
-    ref = str(first_row.get(col_ref, '')).strip()
-    description = str(first_row.get(col_desc, '')).strip()
-    
-    # بناء قائمة المتغيرات (الألوان والصور)
-    variants_list = []
-    
-    for _, row in group.iterrows():
-        color_name = str(row.get(col_color, 'أساسي')).strip()
-        image_url = str(row.get(col_image, '')).strip()
+    excel_file_path = find_excel_file()
+    if not excel_file_path:
+        raise FileNotFoundError("❌ لم يتم العثور على أي ملف إكسيل في المستودع!")
         
-        if image_url and not pd.isna(row.get(col_image)):
-            variants_list.append({
-                "color": color_name,
-                "image": image_url
-            })
-            
-    # إذا لم تكن هناك صور، نضع صورة افتراضية
-    if not variants_list:
-        variants_list.append({
-            "color": "أساسي",
-            "image": "https://via.placeholder.com/400?text=No+Image"
-        })
+    df = pd.read_excel(excel_file_path)
+    
+    # تجميع البيانات بناءً على "المرجع (SKU / Ref)"
+    grouped = df.groupby('المرجع (SKU / Ref)')
+    unique_refs = list(grouped.groups.keys())
+    
+    start_index = 0
+    if os.path.exists(INDEX_FILE_PATH):
+        with open(INDEX_FILE_PATH, 'r') as f:
+            try:
+                start_index = int(f.read().strip())
+                print(f"[✓] سنبدأ من المنتج رقم: {start_index}")
+            except:
+                start_index = 0
 
-    # الصورة الأولى ستكون هي الصورة الأساسية للتدوينة
-    featured_image = variants_list[0]['image']
+    if start_index >= len(unique_refs):
+        print("[✓] تم نشر جميع المنتجات المجمعة بنجاح! إعادة التعيين...")
+        start_index = 0
+        
+    service = get_blogger_service()
     
-    # تحويل مصفوفة الألوان والصور إلى نص JSON منظم ليقرأه القالب
-    variants_json_string = json.dumps(variants_list, ensure_ascii=False)
-    
-    # صياغة محتوى الـ HTML المتوافق مع قالب التدوينة المطور الخاص بك
-    html_content = f"""
-    <div class="separator" style="clear: both; text-align: center;">
-        <a href="{featured_image}" imageanchor="1" style="margin-left: 1em; margin-right: 1em;">
-            <img border="0" src="{featured_image}" data-original-width="800" data-original-height="800" />
-        </a>
-    </div>
-    
-    <p>المرجع: {ref}</p>
-    
-    <div class="product-description-text">
-        {description}
+    max_publish_count = 1  
+    count = 0  
+    current_index = start_index
+
+    while count < max_publish_count and current_index < len(unique_refs):
+        ref_id = unique_refs[current_index]
+        product_group = grouped.get_group(ref_id)
+        
+        first_row = product_group.iloc[0]
+        product_title = first_row['اسم المنتج (Title)']
+        desc = first_row['الوصف والمواصفات (Description)']
+        
+        main_image = bypass_hotlink(first_row['رابط الصورة (Image URL)'])
+        
+        brand = "lap"           
+        category = "commande"   
+        price = "150"           
+        
+        # استخراج قائمة الألوان والروابط المكسورة الحظر
+        all_colors = []
+        variants_data = []
+        
+        for _, row in product_group.iterrows():
+            c_name = str(row['اللون (Color)']).strip()
+            c_url = str(row['رابط الصورة (Image URL)']).strip()
+            if c_name and c_name not in all_colors:
+                all_colors.append(c_name)
+                variants_data.append({
+                    "color": c_name,
+                    "image": bypass_hotlink(c_url)
+                })
+        
+        # تحويل الخيارات إلى JSON ليمرر داخل وسم السكربت
+        json_variants = json.dumps(variants_data, ensure_ascii=False)
+
+        # دمج الألوان وبناء واجهة تفاعلية داخل محتوى التدوينة مباشرة لتحديث الصورة
+        post_content = f"""<div class="product-container" style="text-align: right; direction: rtl; font-family: sans-serif;">
+        
+    <!-- الصورة الرئيسية للمنتج مع مُعرّف خاص للتحكم بها -->
+    <div class="product-main-image-wrapper" style="text-align: center; margin-bottom: 20px;">
+        <img id="main-product-img-{ref_id}" src="{main_image}" alt="{product_title}" style="max-width:100%; max-height: 400px; object-fit: contain; border-radius: 8px; border: 1px solid #ddd; padding: 5px;" />
     </div>
 
-    <!-- مصفوفة JSON التي ستجعل أزرار الألوان تظهر وتغير الصور تفاعلياً -->
+    <p><strong>السعر الإجمالي:</strong> {price} DH</p>
+    <p><strong>الماركة:</strong> {brand}</p>
+    <p><strong>التصنيف:</strong> {category}</p>
+    <p><strong>المرجع:</strong> {ref_id}</p>
+
+    <!-- مكان عرض اسم اللون الحالي المختار -->
+    <p><strong>Couleur:</strong> <span id="current-color-text-{ref_id}">{all_colors[0] if all_colors else ''}</span></p>
+
+    <!-- حاوية خيارات الألوان (ستظهر كأزرار تفاعلية) -->
+    <div class="color-variants-selector" style="display: flex; gap: 10px; flex-wrap: wrap; margin: 15px 0;">
+        {"".join([f'<button type="button" class="color-btn-{ref_id}" data-color="{v["color"]}" data-image="{v["image"]}" style="padding: 8px 15px; border: 1px solid #ccc; background: #fff; cursor: pointer; border-radius: 4px; font-weight: bold; transition: all 0.2s;">{v["color"]}</button>' for v in variants_data])}
+    </div>
+
+    <!-- بيانات الخيارات المخفية للـ JSON -->
     <script type="application/json" class="product-variants-json">
-    {variants_json_string}
+    {json_variants}
     </script>
-    """
-    
-    # استخدام المرجع (SKU) أو اسم عام كعلامة (Tag/Label) للتدوينة
-    tags = ["أوميغا", ref] if ref else ["أوميغا"]
-    
-    create_blogger_post(
-        title=str(product_name),
-        content=html_content,
-        tags=tags
-    )
 
-print("\n🚀 تم الانتهاء من معالجة ونشر جميع المنتجات بنجاح بالتوافق مع ملف الإكسل المرفق!")
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
+    
+    <div class="product-description" style="line-height: 1.6; color: #555;">
+        <p>{desc}</p>
+    </div>
+</div>
+
+<!-- سكربت جافا سكريبت لتشغيل خاصية التبديل التفاعلي عند الضغط -->
+<script>
+(function() {{
+    const refId = "{ref_id}";
+    const buttons = document.querySelectorAll('.color-btn-' + refId);
+    const mainImg = document.getElementById('main-product-img-' + refId);
+    const colorText = document.getElementById('current-color-text-' + refId);
+
+    if(buttons.length > 0) {{
+        // وضع ستايل نشط لأول لون افتراضياً
+        buttons[0].style.borderColor = "#007bff";
+        buttons[0].style.backgroundColor = "#f0f7ff";
+    }}
+
+    buttons.forEach(btn => {{
+        btn.addEventListener('click', function() {{
+            const targetImage = this.getAttribute('data-image');
+            const targetColor = this.getAttribute('data-color');
+            
+            // تغيير الصورة واسم اللون
+            if(mainImg && targetImage) mainImg.src = targetImage;
+            if(colorText) colorText.innerText = targetColor;
+            
+            # إعادة تعيين مظهر باقي الأزرار
+            buttons.forEach(b => {{
+                b.style.borderColor = "#ccc";
+                b.style.backgroundColor = "#fff";
+            }});
+            
+            // تمييز الزر المختار حالياً
+            this.style.borderColor = "#007bff";
+            this.style.backgroundColor = "#f0f7ff";
+        }});
+    }});
+}})();
+</script>
+"""
+
+        post_body = {
+            'kind': 'blogger#post',
+            'blog': {'id': blog_id},
+            'title': f"{product_title}",
+            'content': post_content,
+            'labels': [category, brand]
+        }
+        
+        try:
+            request = service.posts().insert(blogId=blog_id, body=post_body, isDraft=False)
+            request.execute()
+            print(f"✅ Published: {product_title} with interactive dynamic image switching")
+            count += 1
+            
+        except Exception as e:
+            print(f"❌ Error publishing {product_title}: {e}")
+            
+        current_index += 1
+
+    with open(INDEX_FILE_PATH, 'w') as f:
+        f.write(str(current_index))
+    print(f"📝 تم حفظ مؤشر التوقف عند المنتج رقم: {current_index}")
+
+if __name__ == '__main__':
+    publish_combined_products()
