@@ -13,7 +13,7 @@ INDEX_FILE_PATH = 'last_index.txt'
 def get_blogger_service():
     """
     توليد صلاحيات الاتصال ببلوجر مع الفحص والتجديد التلقائي للـ Token
-    لتفادي خطأ الـ 403 (Permission Denied) في حال انتهاء الصلاحية المؤقتة.
+    لتفادي خطأ الـ 403 (Permission Denied) في حال انتهى التوكن المؤقت.
     """
     token_str = os.environ.get('BLOGGER_TOKEN')
     if not token_str:
@@ -24,7 +24,7 @@ def get_blogger_service():
     # تحويل بيانات الـ JSON إلى كائن صلاحيات معتمد من مكتبة جوجل
     creds = Credentials.from_authorized_user_info(creds_info, SCOPES)
     
-    # 🌟 التحقق مما إذا كان الـ Token قد انتهى (ينتهي تلقائياً كل ساعة) وتجديده فوراً
+    # التحقق من صلاحية التوكن وتجديده فوراً إذا انتهى (السر المستفاد من السكربت الآخر)
     if not creds.valid:
         if creds.expired and creds.refresh_token:
             print("[~] الـ Token منتهي الصلاحية... جاري تجديده تلقائياً الآن عن طريق الـ Refresh Token!")
@@ -59,14 +59,15 @@ def publish_all_products():
             except:
                 start_index = 0
 
+    # في حال انتهى الملف، نقوم بإعادة تصفير العداد لتبدأ الدورة من جديد أو ننهي العملية
     if start_index >= len(df):
-        print("[✓] تم نشر جميع المنتجات الموجودة في ملف Excel بالكامل!")
-        exit()
+        print("[✓] تم نشر جميع المنتجات الموجودة في ملف Excel بالكامل! جاري إرجاع المؤشر إلى الصفر للبدء من جديد...")
+        start_index = 0
         
     # تهيئة اتصال الخدمة بعد التحقق وتحديث الصلاحية
     service = get_blogger_service()
     
-    max_publish_count = 5  # تحديد عدد المنتجات للنشر في كل دفعة (لتفادي حظر جوجل أو استهلاك طاقة الأكشن بالكامل)
+    max_publish_count = 5  # عدد المنتجات لكل دورة أوتوماتيكية
     count = 0  
     current_index = start_index
 
@@ -108,17 +109,18 @@ def publish_all_products():
 </div>
 </div>"""
 
+        # تعديل بنيوي حاسم: أزلنا حقل 'status' من هنا لتجنب تعارض الصلاحيات
         post_body = {
             'kind': 'blogger#post',
             'blog': {'id': blog_id},
             'title': f"{product_title} - {color}",
             'content': post_content,
-            'labels': [category, brand],
-            'status': 'DRAFT'  # يُنشر كمسودة لمراجعة جودة التنسيق قبل الإطلاق العام للمشترين
+            'labels': [category, brand]
         }
         
         try:
-            request = service.posts().insert(blogId=blog_id, body=post_body)
+            # 🌟 التعديل الجوهري: نمرر معامل isDraft=True كمعامل خارجي للدالة كما تتطلبه الـ API رسمياً
+            request = service.posts().insert(blogId=blog_id, body=post_body, isDraft=True)
             request.execute()
             print(f"✅ Created draft: {product_title} ({color})")
             count += 1
