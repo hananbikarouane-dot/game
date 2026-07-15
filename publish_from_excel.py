@@ -58,7 +58,7 @@ def publish_combined_products():
         
     df = pd.read_excel(excel_file_path)
     
-    # تجميع البيانات بناءً على "المرجع (SKU / Ref)" لدمج الألوان في منتج واحد
+    # تجميع البيانات بناءً على "المرجع (SKU / Ref)"
     grouped = df.groupby('المرجع (SKU / Ref)')
     unique_refs = list(grouped.groups.keys())
     
@@ -89,31 +89,30 @@ def publish_combined_products():
         product_title = first_row['اسم المنتج (Title)']
         desc = first_row['الوصف والمواصفات (Description)']
         
-        # كسر حظر الصورة البارزة الأساسية
         main_image = bypass_hotlink(first_row['رابط الصورة (Image URL)'])
         
         brand = "lap"           
         category = "commande"   
         price = "150"           
         
-        # تجميع أسماء الألوان من كل السطور المرتبطة بالمرجع وفصلها بفواصل كما يتوقع القالب
-        all_colors_list = []
+        # 🎨 استخراج قائمة الألوان الفريدة وكتابتها كل واحدة في سطر مستقل تماماً
+        # القوالب الاحترافية في بلوجر تقرأ خيارات المنتج عندما تكتب "اللون: اسم" منفصلة في كل سطر
+        colors_lines_html = ""
         for _, row in product_group.iterrows():
             c_name = str(row['اللون (Color)']).strip()
-            if c_name and c_name not in all_colors_list:
-                all_colors_list.append(c_name)
-        
-        colors_str = ", ".join(all_colors_list)
+            if c_name:
+                colors_lines_html += f"<p>اللون: {c_name}</p>\n"
 
-        # 🌟 الصياغة النصية الدقيقة والمطابقة لـ Regex الخاص بالقالب
-        # تركنا سطر "اللون:" نظيفاً ومفصولاً بفواصل ليقوم قالبك ببناء المربعات تلقائياً
+        # صياغة محتوى التدوينة بالهيكلية البرمجية التي يطلبها قالبك
         post_content = f"""<div style="text-align: right; direction: rtl;">
 <img src="{main_image}" alt="{product_title}" style="max-width:100%; display:block; margin-bottom: 20px; border-radius: 8px;" />
 <p>السعر الإجمالي: {price}</p>
 <p>الماركة: {brand}</p>
 <p>التصنيف: {category}</p>
-<p>اللون: {colors_str}</p>
 <p>المرجع: {ref_id}</p>
+<!-- بداية خيارات الألوان المنفصلة للقالب -->
+{colors_lines_html}
+<!-- نهاية خيارات الألوان -->
 <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
 <div class="product-description" style="line-height: 1.6; color: #555;">
     <p>{desc}</p>
@@ -131,7 +130,7 @@ def publish_combined_products():
         try:
             request = service.posts().insert(blogId=blog_id, body=post_body, isDraft=False)
             request.execute()
-            print(f"✅ Published Combined Product: {product_title} (RÉF: {ref_id})")
+            print(f"✅ Published Combined Product with variations: {product_title} (RÉF: {ref_id})")
             count += 1
             
         except Exception as e:
@@ -141,7 +140,7 @@ def publish_combined_products():
 
     with open(INDEX_FILE_PATH, 'w') as f:
         f.write(str(current_index))
-    print(f"📝 تم حفظ مؤشر التوقف الحالي عند الحساب الفريد: {current_index}")
+    print(f"📝 تم حفظ مؤشر التوقف الحالي عند المنتج رقم: {current_index}")
 
 if __name__ == '__main__':
     publish_combined_products()
