@@ -1,23 +1,30 @@
 import pandas as pd
 import requests
-import re
 import json
+import os
+import glob
 
-# --- إعدادات الحساب والمدونة ---
-API_KEY = "ضع_مفتاح_الـ_API_الخاص_بـ_غوغل_هنا"
-BLOG_ID = "ضع_معرف_المدونة_BLOG_ID_هنا"
-EXCEL_FILE_PATH = "lap_omega_all_colors.xlsx"  # اسم ملف الإكسل الخاص بك
+# --- إعدادات الحساب والمدونة عبر البيئة المحمية (GitHub Actions Env) ---
+BLOG_ID = os.environ.get("BLOG_ID", "ضع_معرف_المدونة_هنا")
+BLOGGER_TOKEN = os.environ.get("BLOGGER_TOKEN") 
+
+def find_excel_file():
+    # يبحث عن ملف الإكسل الخاص بك في المجلد
+    excel_files = glob.glob("*.xlsx") + glob.glob("*.xls")
+    if excel_files:
+        print(f"📂 تم العثور تلقائياً على ملف الإكسل: {excel_files[0]}")
+        return excel_files[0]
+    return "lap_omega_all_colors (2).xlsx"
+
+EXCEL_FILE_PATH = find_excel_file()
 
 # --- دالة نشر تدوينة جديدة في بلوجر ---
 def create_blogger_post(title, content, tags):
-    url = f"https://www.googleapis.com/pagespeedonline/v5/runPagespeed" # (مثال توضيحي، استخدم رابط Blogger API الفعلي أدناه)
     url = f"https://www.googleapis.com/blogger/v3/blogs/{BLOG_ID}/posts/"
-    
     headers = {
-        "Authorization": f"Bearer {API_KEY}",
+        "Authorization": f"Bearer {BLOGGER_TOKEN}",
         "Content-Type": "application/json"
     }
-    
     payload = {
         "kind": "blogger#post",
         "title": title,
@@ -25,96 +32,100 @@ def create_blogger_post(title, content, tags):
         "labels": tags
     }
     
-    # يمكنك تفعيل السطرين أدناه عند إدخال الـ Token الصحيح الخاص بك
-    # response = requests.post(url, headers=headers, json=payload)
-    # return response.json()
-    print(f"✔️ تم تجهيز ونشر المنتج: {title} مع ألوانه وتصنيفاته.")
+    if BLOGGER_TOKEN and BLOG_ID != "ضع_معرف_المدونة_هنا":
+        response = requests.post(url, headers=headers, json=payload)
+        if response.status_code in [200, 201]:
+            print(f"✔️ تم نشر المنتج بنجاح: {title}")
+        else:
+            print(f"❌ خطأ أثناء النشر لـ {title}: {response.text}")
+    else:
+        print(f"⚠️ وضع التجربة: تم تجهيز المنتج بنجاح: {title}")
 
 # --- 1. قراءة البيانات من ملف الإكسل ---
 try:
     df = pd.read_excel(EXCEL_FILE_PATH)
 except Exception as e:
-    print(f"❌ خطأ في قراءة ملف الإكسل: {e}")
+    print(f"❌ خطأ في قراءة ملف الإكسل ({EXCEL_FILE_PATH}): {e}")
     exit()
 
-# تنظيف أسماء الأعمدة (إزالة أي مساحات زائدة)
-df.columns = [c.strip() for c in df.columns]
+# تنظيف أسماء الأعمدة من أي مسافات زائدة
+df.columns = [str(c).strip() for c in df.columns]
 
-# --- 2. تجميع المنتجات بناءً على الاسم ---
-# سنقوم بتجميع كل الصفوف التي لها نفس اسم المنتج لكي ندمج الألوان والصور الخاصة بها
-grouped = df.groupby('اسم المنتج')
+# تحديد الأعمدة الصحيحة بناءً على ملفك المرفق
+col_title = 'اسم المنتج (Title)'
+col_color = 'اللون (Color)'
+col_ref = 'المرجع (SKU / Ref)'
+col_image = 'رابط الصورة (Image URL)'
+col_desc = 'الوصف والمواصفات (Description)'
 
+# --- 2. تجميع المنتجات بناءً على اسم المنتج ---
+grouped = df.groupby(col_title)
 print(f"📦 تم العثور على {len(grouped)} منتج فريد بعد دمج الألوان والخيارات.")
 
 # --- 3. معالجة كل منتج مدمج ونشره ---
 for product_name, group in grouped:
-    # أخذ البيانات الأساسية من أول صف في المجموعة
+    if pd.isna(product_name) or str(product_name).strip() == "":
+        continue
+        
     first_row = group.iloc[0]
     
-    price = first_row.get('السعر الإجمالي', 0)
-    brand = str(first_row.get('الماركة', '')).strip()
-    sub_category = str(first_row.get('التصنيف', '')).strip()
-    ref = str(first_row.get('المرجع', '')).strip()
-    description = str(first_row.get('الوصف', '')).strip()
+    # جلب البيانات الأساسية للمنتج
+    ref = str(first_row.get(col_ref, '')).strip()
+    description = str(first_row.get(col_desc, '')).strip()
     
-    # بناء مصفوفة المتغيرات (الألوان والصور) للمنتج الحالي
+    # بناء قائمة المتغيرات (الألوان والصور)
     variants_list = []
-    all_tags = [brand, sub_category]
     
     for _, row in group.iterrows():
-        color_name = str(row.get('اللون', 'أساسي')).strip()
-        image_url = str(row.get('رابط الصورة', '')).strip()
+        color_name = str(row.get(col_color, 'أساسي')).strip()
+        image_url = str(row.get(col_image, '')).strip()
         
-        if image_url:
+        if image_url and not pd.isna(row.get(col_image)):
             variants_list.append({
                 "color": color_name,
                 "image": image_url
             })
             
-    # إذا لم تكن هناك أي متغيرات مصورة، نضع صورة افتراضية
+    # إذا لم تكن هناك صور، نضع صورة افتراضية
     if not variants_list:
         variants_list.append({
             "color": "أساسي",
             "image": "https://via.placeholder.com/400?text=No+Image"
         })
 
-    # --- 4. بناء محتوى الـ HTML المتوافق مع قالب المتجر المطور ---
-    # الصورة الأولى ستكون هي الصورة البارزة للمنتج
+    # الصورة الأولى ستكون هي الصورة الأساسية للتدوينة
     featured_image = variants_list[0]['image']
     
-    # تحويل مصفوفة الألوان إلى نص JSON منظم
+    # تحويل مصفوفة الألوان والصور إلى نص JSON منظم ليقرأه القالب
     variants_json_string = json.dumps(variants_list, ensure_ascii=False)
     
-    # صياغة المحتوى النصي المنظم لكي يقرأه محرك القالب
+    # صياغة محتوى الـ HTML المتوافق مع قالب التدوينة المطور الخاص بك
     html_content = f"""
-    <!-- الصورة البارزة الأساسية للمنتج -->
     <div class="separator" style="clear: both; text-align: center;">
         <a href="{featured_image}" imageanchor="1" style="margin-left: 1em; margin-right: 1em;">
             <img border="0" src="{featured_image}" data-original-width="800" data-original-height="800" />
         </a>
     </div>
     
-    <!-- البيانات النصية المنظمة التي يقرأها السكربت -->
-    <p>السعر الإجمالي: {price} DH</p>
-    <p>الماركة: {brand}</p>
-    <p>التصنيف: {sub_category}</p>
     <p>المرجع: {ref}</p>
     
     <div class="product-description-text">
         {description}
     </div>
 
-    <!-- مصفوفة JSON الذكية والمخفية التي سيتعرف عليها القالب لإنشاء أزرار الألوان التفاعلية -->
+    <!-- مصفوفة JSON التي ستجعل أزرار الألوان تظهر وتغير الصور تفاعلياً -->
     <script type="application/json" class="product-variants-json">
     {variants_json_string}
     </script>
     """
     
-    # تنفيذ عملية النشر
+    # استخدام المرجع (SKU) أو اسم عام كعلامة (Tag/Label) للتدوينة
+    tags = ["أوميغا", ref] if ref else ["أوميغا"]
+    
     create_blogger_post(
-        title=product_name,
+        title=str(product_name),
         content=html_content,
-        tags=all_tags
+        tags=tags
     )
 
-print("\n🚀 تم الانتهاء من معالجة جميع المنتجات بنجاح!")
+print("\n🚀 تم الانتهاء من معالجة ونشر جميع المنتجات بنجاح بالتوافق مع ملف الإكسل المرفق!")
