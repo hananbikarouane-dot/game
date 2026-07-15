@@ -112,7 +112,7 @@ def publish_combined_products():
         # تحويل الخيارات إلى JSON ليمرر داخل وسم السكربت
         json_variants = json.dumps(variants_data, ensure_ascii=False)
 
-        # دمج الألوان وبناء واجهة تفاعلية داخل محتوى التدوينة مباشرة لتحديث الصورة
+        # دمج الألوان وبناء واجهة تفاعلية داخل محتوى التدوينة مباشرة مع حماية الشفرات من الظهور
         post_content = f"""<div class="product-container" style="text-align: right; direction: rtl; font-family: sans-serif;">
         
     <!-- الصورة الرئيسية للمنتج مع مُعرّف خاص للتحكم بها -->
@@ -128,15 +128,17 @@ def publish_combined_products():
     <!-- مكان عرض اسم اللون الحالي المختار -->
     <p><strong>Couleur:</strong> <span id="current-color-text-{ref_id}">{all_colors[0] if all_colors else ''}</span></p>
 
-    <!-- حاوية خيارات الألوان (ستظهر كأزرار تفاعلية) -->
+    <!-- حاوية خيارات الألوان التفاعلية -->
     <div class="color-variants-selector" style="display: flex; gap: 10px; flex-wrap: wrap; margin: 15px 0;">
         {"".join([f'<button type="button" class="color-btn-{ref_id}" data-color="{v["color"]}" data-image="{v["image"]}" style="padding: 8px 15px; border: 1px solid #ccc; background: #fff; cursor: pointer; border-radius: 4px; font-weight: bold; transition: all 0.2s;">{v["color"]}</button>' for v in variants_data])}
     </div>
 
-    <!-- بيانات الخيارات المخفية للـ JSON -->
-    <script type="application/json" class="product-variants-json">
-    {json_variants}
-    </script>
+    <!-- تم إخفاء بيانات JSON تماماً لمنع بلوجر من عرضها للزائر -->
+    <div style="display:none !important; visibility:hidden; height:0; width:0; overflow:hidden;">
+        <script type="application/json" class="product-variants-json">
+        {json_variants}
+        </script>
+    </div>
 
     <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
     
@@ -145,42 +147,42 @@ def publish_combined_products():
     </div>
 </div>
 
-<!-- سكربت جافا سكريبت لتشغيل خاصية التبديل التفاعلي عند الضغط -->
-<script>
+<!-- وضع السكربت داخل وسم مغلف ومحمي يمنع بلوجر من طباعته كنص -->
+<div style="display:none !important; visibility:hidden; height:0; width:0; overflow:hidden;">
+<script type="text/javascript">
+//<![CDATA[
 (function() {{
-    const refId = "{ref_id}";
-    const buttons = document.querySelectorAll('.color-btn-' + refId);
-    const mainImg = document.getElementById('main-product-img-' + refId);
-    const colorText = document.getElementById('current-color-text-' + refId);
+    var refId = "{ref_id}";
+    var buttons = document.querySelectorAll('.color-btn-' + refId);
+    var mainImg = document.getElementById('main-product-img-' + refId);
+    var colorText = document.getElementById('current-color-text-' + refId);
 
     if(buttons.length > 0) {{
-        // وضع ستايل نشط لأول لون افتراضياً
         buttons[0].style.borderColor = "#007bff";
         buttons[0].style.backgroundColor = "#f0f7ff";
     }}
 
-    buttons.forEach(btn => {{
+    buttons.forEach(function(btn) {{
         btn.addEventListener('click', function() {{
-            const targetImage = this.getAttribute('data-image');
-            const targetColor = this.getAttribute('data-color');
+            var targetImage = this.getAttribute('data-image');
+            var targetColor = this.getAttribute('data-color');
             
-            // تغيير الصورة واسم اللون
             if(mainImg && targetImage) mainImg.src = targetImage;
             if(colorText) colorText.innerText = targetColor;
             
-            # إعادة تعيين مظهر باقي الأزرار
-            buttons.forEach(b => {{
+            buttons.forEach(function(b) {{
                 b.style.borderColor = "#ccc";
                 b.style.backgroundColor = "#fff";
             }});
             
-            // تمييز الزر المختار حالياً
             this.style.borderColor = "#007bff";
             this.style.backgroundColor = "#f0f7ff";
         }});
     }});
 }})();
+//]]>
 </script>
+</div>
 """
 
         post_body = {
