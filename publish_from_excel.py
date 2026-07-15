@@ -58,7 +58,7 @@ def publish_combined_products():
         
     df = pd.read_excel(excel_file_path)
     
-    # تجميع البيانات بناءً على "المرجع (SKU / Ref)" لدمج الألوان في منتج واحد
+    # تجميع البيانات بناءً على "المرجع (SKU / Ref)"
     grouped = df.groupby('المرجع (SKU / Ref)')
     unique_refs = list(grouped.groups.keys())
     
@@ -89,35 +89,36 @@ def publish_combined_products():
         product_title = first_row['اسم المنتج (Title)']
         desc = first_row['الوصف والمواصفات (Description)']
         
-        # الصورة الرئيسية للمنتج (تظهر عند فتح الصفحة لأول مرة)
+        # الصورة الرئيسية (ستظهر في واجهة المتجر والنافذة)
         main_image = bypass_hotlink(first_row['رابط الصورة (Image URL)'])
         
         brand = "lap"           
         category = "commande"   
         price = "150"           
         
-        # 🎨 ربط كل لون برابط الصورة المباشرة المفتوحة الحظر الخاصة به
-        colors_lines_html = ""
+        # استخراج قائمة الألوان الفريدة
+        all_colors_list = []
         for _, row in product_group.iterrows():
             c_name = str(row['اللون (Color)']).strip()
-            c_url = str(row['رابط الصورة (Image URL)']).strip()
-            
-            if c_name and c_url:
-                # كسر حظر رابط الصورة الخاص باللون المحدد
-                safe_color_image = bypass_hotlink(c_url)
-                
-                # طباعة اسم اللون ومرفق معه رابط صورته ليفهم القالب عملية التبديل الديناميكي
-                colors_lines_html += f"<p>اللون: {c_name} | {safe_color_image}</p>\n"
+            if c_name and c_name not in all_colors_list:
+                all_colors_list.append(c_name)
+        
+        # لجعل القالب يقرأ الألوان كأزرار منفصلة صحيحة دون تشويه النص:
+        # بعض القوالب تقرأ الخيارات المفرقة بأسطر (اللون: اسم)، وبعضها يقرأها مجمعة بفواصل (اللون: لون1, لون2).
+        # سنعتمد الصيغة القياسية النظيفة التي تفصل الخيارات برمجياً:
+        colors_options_html = ""
+        for color in all_colors_list:
+            colors_options_html += f"<p>اللون: {color}</p>\n"
 
-        # صياغة محتوى التدوينة بالهيكلية البرمجية المتوافقة مع سكربت القالب
+        # صياغة محتوى التدوينة المتوافق بدون روابط مشوهة في حقول النص
         post_content = f"""<div style="text-align: right; direction: rtl;">
 <img src="{main_image}" alt="{product_title}" style="max-width:100%; display:block; margin-bottom: 20px; border-radius: 8px;" />
 <p>السعر الإجمالي: {price}</p>
 <p>الماركة: {brand}</p>
 <p>التصنيف: {category}</p>
 <p>المرجع: {ref_id}</p>
-<!-- خيارات الألوان المربوطة ديناميكياً بالصور لعرض التغيير الفوري -->
-{colors_lines_html}
+<!-- خيارات الألوان التي يترجمها سكربت متجرك إلى أزرار تفاعلية -->
+{colors_options_html}
 <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
 <div class="product-description" style="line-height: 1.6; color: #555;">
     <p>{desc}</p>
@@ -135,7 +136,7 @@ def publish_combined_products():
         try:
             request = service.posts().insert(blogId=blog_id, body=post_body, isDraft=False)
             request.execute()
-            print(f"✅ Published Dynamic Product: {product_title} (RÉF: {ref_id})")
+            print(f"✅ Published: {product_title} (RÉF: {ref_id})")
             count += 1
             
         except Exception as e:
