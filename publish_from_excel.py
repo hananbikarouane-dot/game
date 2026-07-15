@@ -1,7 +1,7 @@
 import os
 import json
 import time
-import random  # لتوليد فواصل زمنية عشوائية ذكية
+import random
 import pandas as pd
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
@@ -57,7 +57,7 @@ def publish_all_products():
         
     service = get_blogger_service()
     
-    # 💡 حددنا عدد منشورات قليل في البداية (مثلاً 5 منتجات لكل تشغيل للأكشن) لحماية المدونة الجديدة
+    # نشر 5 منتجات فقط في كل تشغيل لحماية الحساب الجديد
     max_publish_count = 5  
     count = 0  
     current_index = start_index
@@ -70,14 +70,15 @@ def publish_all_products():
         ref = str(row['المرجع (SKU / Ref)'])
         image_url = row['رابط الصورة (Image URL)']
         desc = row['الوصف والمواصفات (Description)']
-        source_link = row['رابط المصدر (Source Link)']
         
-        brand = "LAP"  
-        category = "commande"  
-        price = "150"  
+        # ⚠️ القيم الافتراضية المتوافقة مع فلاتر القالب 
+        brand = "lap"           # القالب يفحص وجود كلمة 'lap' أو 'ingelec' ليصنف الماركة
+        category = "commande"   # القالب يقبل: protection, commande, automatisation, énergie
+        price = "150"           # يجب أن يكتب السعر كرقم مجرد ليقرأه القالب
         
+        # 🌟 صياغة المحتوى متطابقة تماماً مع الـ Regular Expressions (Regex) الموجودة في قالبك
         post_content = f"""<div style="text-align: right; direction: rtl;">
-<img src="{image_url}" alt="{product_title}" style="max-width:100%; display:none;" />
+<img src="{image_url}" alt="{product_title}" style="max-width:100%; display:block; margin-bottom: 15px;" />
 <p>السعر الإجمالي: {price}</p>
 <p>الماركة: {brand}</p>
 <p>التصنيف: {category}</p>
@@ -85,34 +86,30 @@ def publish_all_products():
 <p>المرجع: {ref}</p>
 <hr />
 <div class="product-description">
-    <p><strong>📋 مواصفات المنتج الأساسية:</strong></p>
     <p>{desc}</p>
-</div>
-<div class="single-affiliate-box" style="margin-top: 20px; text-align: center;">
-    <a class="aff-link-btn btn-amazon" href="{source_link}" target="_blank" style="padding: 10px 20px; background-color: #ff9900; color: white; text-decoration: none; border-radius: 5px; display: inline-block;">
-        🔗 معاينة المنتج في المصدر الأصلي
-    </a>
 </div>
 </div>"""
 
         post_body = {
             'kind': 'blogger#post',
             'blog': {'id': blog_id},
-            'title': f"{product_title} - {color}",
+            'title': f"{product_title}",
             'content': post_content,
+            # القالب يقرأ النصوص من الداخل، ولكن إضافة التسميات تنظم الأرشيف
             'labels': [category, brand]
         }
         
         try:
-            request = service.posts().insert(blogId=blog_id, body=post_body, isDraft=True)
+            # 🚨 تنبيه: القالب يقوم بجلب المنشورات العامة فقط (fetch) 
+            # لذلك يجب تغيير isDraft إلى False لكي يراها القالب على الواجهة فوراً!
+            request = service.posts().insert(blogId=blog_id, body=post_body, isDraft=False)
             request.execute()
-            print(f"✅ Created draft: {product_title} ({color})")
+            print(f"✅ Published Live: {product_title} ({color})")
             count += 1
             
-            # 🌟 نظام الحماية الذكي: انتظر مدة عشوائية تتراوح بين 30 إلى 60 ثانية قبل المنتج القادم
             if count < max_publish_count:
                 delay_time = random.randint(30, 60)
-                print(f"[⏳] الانتظار لمدة {delay_time} ثانية لمحاكاة السلوك البشري وحماية الحساب من الرصد...")
+                print(f"[⏳] الانتظار لمدة {delay_time} ثانية لمحاكاة السلوك البشري...")
                 time.sleep(delay_time)
                 
         except Exception as e:
@@ -123,7 +120,6 @@ def publish_all_products():
     with open(INDEX_FILE_PATH, 'w') as f:
         f.write(str(current_index))
     print(f"\n📝 [✓] تم حفظ مؤشر التوقف الحالي: {current_index}")
-    print("🏁 انتهت مهمة الأتمتة الحالية بأمان!")
 
 if __name__ == '__main__':
     publish_all_products()
