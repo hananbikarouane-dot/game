@@ -133,8 +133,8 @@ def publish_combined_products():
         {"".join([f'<button type="button" class="color-btn-{ref_id}" data-color="{v["color"]}" data-image="{v["image"]}" style="padding: 8px 15px; border: 1px solid #ccc; background: #fff; cursor: pointer; border-radius: 4px; font-weight: bold; transition: all 0.2s;">{v["color"]}</button>' for v in variants_data])}
     </div>
 
-    <!-- بيانات الخيارات المخفية للـ JSON -->
-    <script type="application/json" class="product-variants-json">
+    <!-- تم تغيير الكلاس هنا لمنع قالب بلوجر من قراءة الـ JSON وطباعته بشكل عشوائي -->
+    <script type="application/json" class="product-variants-json-custom">
     {json_variants}
     </script>
 
@@ -168,7 +168,7 @@ def publish_combined_products():
             if(mainImg && targetImage) mainImg.src = targetImage;
             if(colorText) colorText.innerText = targetColor;
             
-            # إعادة تعيين مظهر باقي الأزرار
+            // إصلاح تعليق الجافا سكريبت بدلاً من علامة البايثون لعدم حدوث أخطاء برمجية
             buttons.forEach(b => {{
                 b.style.borderColor = "#ccc";
                 b.style.backgroundColor = "#fff";
