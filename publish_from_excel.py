@@ -109,25 +109,13 @@ def publish_combined_products():
                     "image": bypass_hotlink(c_url)
                 })
         
-        # تحويل الخيارات إلى JSON ليمرر داخل وسم السكربت
+        # تحويل الخيارات إلى JSON نظيف ليتعرف عليه قالب بلوجر تلقائياً
         json_variants = json.dumps(variants_data, ensure_ascii=False)
 
-        # دمج الألوان وبناء واجهة تفاعلية داخل محتوى التدوينة مباشرة لتحديث الصورة
+        # محتوى التدوينة نظيف ومبسط ومبرمج ليتوافق مع القالب مباشرة بدون أكواد زائدة تسبب تكرار النصوص
         post_content = f"""<div class="product-container" style="text-align: right; direction: rtl; font-family: sans-serif;">
         
-    <!-- إضافة كود CSS لإخفاء النص التلقائي الذي يولده القالب للـ JSON بشكل قسري -->
-    <style>
-        .product-variants-json {{
-            display: none !important;
-            visibility: hidden !important;
-            height: 0 !important;
-            width: 0 !important;
-            opacity: 0 !important;
-            overflow: hidden !important;
-        }}
-    </style>
-
-    <!-- الصورة الرئيسية للمنتج مع مُعرّف خاص للتحكم بها -->
+    <!-- الصورة الرئيسية للمنتج -->
     <div class="product-main-image-wrapper" style="text-align: center; margin-bottom: 20px;">
         <img id="main-product-img-{ref_id}" src="{main_image}" alt="{product_title}" style="max-width:100%; max-height: 400px; object-fit: contain; border-radius: 8px; border: 1px solid #ddd; padding: 5px;" />
     </div>
@@ -137,15 +125,7 @@ def publish_combined_products():
     <p><strong>التصنيف:</strong> {category}</p>
     <p><strong>المرجع:</strong> {ref_id}</p>
 
-    <!-- مكان عرض اسم اللون الحالي المختار -->
-    <p><strong>Couleur:</strong> <span id="current-color-text-{ref_id}">{all_colors[0] if all_colors else ''}</span></p>
-
-    <!-- حاوية خيارات الألوان (ستظهر كأزرار تفاعلية) -->
-    <div class="color-variants-selector" style="display: flex; gap: 10px; flex-wrap: wrap; margin: 15px 0;">
-        {"".join([f'<button type="button" class="color-btn-{ref_id}" data-color="{v["color"]}" data-image="{v["image"]}" style="padding: 8px 15px; border: 1px solid #ccc; background: #fff; cursor: pointer; border-radius: 4px; font-weight: bold; transition: all 0.2s;">{v["color"]}</button>' for v in variants_data])}
-    </div>
-
-    <!-- تمت استعادة الكلاس الأصلي ليعمل القالب بشكل ممتاز مع إخفائه بالـ CSS المضاف في الأعلى -->
+    <!-- الكود البرمجي (JSON) الذي يقرأه قالبك لبناء خيارات الألوان التفاعلية تلقائياً -->
     <script type="application/json" class="product-variants-json">
     {json_variants}
     </script>
@@ -156,43 +136,6 @@ def publish_combined_products():
         <p>{desc}</p>
     </div>
 </div>
-
-<!-- سكربت جافا سكريبت لتشغيل خاصية التبديل التفاعلي عند الضغط -->
-<script>
-(function() {{
-    const refId = "{ref_id}";
-    const buttons = document.querySelectorAll('.color-btn-' + refId);
-    const mainImg = document.getElementById('main-product-img-' + refId);
-    const colorText = document.getElementById('current-color-text-' + refId);
-
-    if(buttons.length > 0) {{
-        // وضع ستايل نشط لأول لون افتراضياً
-        buttons[0].style.borderColor = "#007bff";
-        buttons[0].style.backgroundColor = "#f0f7ff";
-    }}
-
-    buttons.forEach(btn => {{
-        btn.addEventListener('click', function() {{
-            const targetImage = this.getAttribute('data-image');
-            const targetColor = this.getAttribute('data-color');
-            
-            // تغيير الصورة واسم اللون
-            if(mainImg && targetImage) mainImg.src = targetImage;
-            if(colorText) colorText.innerText = targetColor;
-            
-            // إعادة تعيين مظهر باقي الأزرار
-            buttons.forEach(b => {{
-                b.style.borderColor = "#ccc";
-                b.style.backgroundColor = "#fff";
-            }});
-            
-            // تمييز الزر المختار حالياً
-            this.style.borderColor = "#007bff";
-            this.style.backgroundColor = "#f0f7ff";
-        }});
-    }});
-}})();
-</script>
 """
 
         post_body = {
@@ -206,7 +149,7 @@ def publish_combined_products():
         try:
             request = service.posts().insert(blogId=blog_id, body=post_body, isDraft=False)
             request.execute()
-            print(f"✅ Published: {product_title} with interactive dynamic image switching")
+            print(f"✅ Published: {product_title} successfully using native template variant styling.")
             count += 1
             
         except Exception as e:
