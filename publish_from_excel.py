@@ -77,7 +77,7 @@ def publish_combined_products():
         
     service = get_blogger_service()
     
-    max_publish_count = 1  
+    max_publish_count = 5 
     count = 0  
     current_index = start_index
 
