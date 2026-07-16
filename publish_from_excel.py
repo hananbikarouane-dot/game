@@ -115,6 +115,18 @@ def publish_combined_products():
         # دمج الألوان وبناء واجهة تفاعلية داخل محتوى التدوينة مباشرة لتحديث الصورة
         post_content = f"""<div class="product-container" style="text-align: right; direction: rtl; font-family: sans-serif;">
         
+    <!-- إضافة كود CSS لإخفاء النص التلقائي الذي يولده القالب للـ JSON بشكل قسري -->
+    <style>
+        .product-variants-json {{
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+            width: 0 !important;
+            opacity: 0 !important;
+            overflow: hidden !important;
+        }}
+    </style>
+
     <!-- الصورة الرئيسية للمنتج مع مُعرّف خاص للتحكم بها -->
     <div class="product-main-image-wrapper" style="text-align: center; margin-bottom: 20px;">
         <img id="main-product-img-{ref_id}" src="{main_image}" alt="{product_title}" style="max-width:100%; max-height: 400px; object-fit: contain; border-radius: 8px; border: 1px solid #ddd; padding: 5px;" />
@@ -133,8 +145,8 @@ def publish_combined_products():
         {"".join([f'<button type="button" class="color-btn-{ref_id}" data-color="{v["color"]}" data-image="{v["image"]}" style="padding: 8px 15px; border: 1px solid #ccc; background: #fff; cursor: pointer; border-radius: 4px; font-weight: bold; transition: all 0.2s;">{v["color"]}</button>' for v in variants_data])}
     </div>
 
-    <!-- تم تغيير الكلاس هنا لمنع قالب بلوجر من قراءة الـ JSON وطباعته بشكل عشوائي -->
-    <script type="application/json" class="product-variants-json-custom">
+    <!-- تمت استعادة الكلاس الأصلي ليعمل القالب بشكل ممتاز مع إخفائه بالـ CSS المضاف في الأعلى -->
+    <script type="application/json" class="product-variants-json">
     {json_variants}
     </script>
 
@@ -168,7 +180,7 @@ def publish_combined_products():
             if(mainImg && targetImage) mainImg.src = targetImage;
             if(colorText) colorText.innerText = targetColor;
             
-            // إصلاح تعليق الجافا سكريبت بدلاً من علامة البايثون لعدم حدوث أخطاء برمجية
+            // إعادة تعيين مظهر باقي الأزرار
             buttons.forEach(b => {{
                 b.style.borderColor = "#ccc";
                 b.style.backgroundColor = "#fff";
